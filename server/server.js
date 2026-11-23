@@ -14,10 +14,16 @@ app.use("/api/auth", require("./routes/auth"));
 app.use("/api/expenses", require("./routes/expenses"));
 app.use("/api/admin", require("./routes/admin"));
 
+app.get("/", (req, res) => {
+  res.send("my server is running");
+});
+
 // Central error handler
 app.use((err, req, res, next) => {
   if (err.name === "ValidationError") {
-    const message = Object.values(err.errors).map((e) => e.message).join(", ");
+    const message = Object.values(err.errors)
+      .map((e) => e.message)
+      .join(", ");
     return res.status(400).json({ message });
   }
   if (err.code === 11000) {
@@ -49,7 +55,9 @@ const PORT = process.env.PORT || 5000;
 
 connectDB()
   .then(seedAdmin)
-  .then(() => app.listen(PORT, () => console.log(`API running on port ${PORT}`)))
+  .then(() =>
+    app.listen(PORT, () => console.log(`API running on port ${PORT}`)),
+  )
   .catch((err) => {
     console.error("Failed to start:", err.message);
     process.exit(1);
